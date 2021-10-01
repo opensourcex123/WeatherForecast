@@ -11,6 +11,14 @@ import kotlin.coroutines.suspendCoroutine
 
 // 网络数据源访问入口,对所有网络请求的api进行封装
 object WeatherForecastNetwork {
+    private val weatherService = ServiceCreator.create(WeatherService::class.java)
+
+    suspend fun getDailyWeather(lng: String, lat: String) =
+        weatherService.getDailyWeather(lng, lat).await()
+
+    suspend fun getRealtimeWeather(lng: String, lat: String) =
+        weatherService.getRealtimeWeather(lng, lat).await()
+
     private val placeService = ServiceCreator.create<PlaceService>()    // 创建接口动态代理对象
 
     suspend fun searchPlaces(query: String) = placeService.searchPlaces(query).await()  // await代表携程函数
