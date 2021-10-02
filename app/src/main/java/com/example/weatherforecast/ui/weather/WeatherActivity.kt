@@ -1,13 +1,19 @@
 package com.example.weatherforecast.ui.weather
 
+import android.content.Context
 import android.graphics.Color
+import android.hardware.input.InputManager
 import android.media.Image
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Layout
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.widget.*
+import androidx.core.view.GravityCompat
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -59,9 +65,29 @@ class WeatherActivity : AppCompatActivity() {
         swiperRefresh.setOnRefreshListener {
             refreshWeather()
         }
+        // 对滑动菜单的逻辑处理
+        val navBtn: Button = findViewById(R.id.navBtn)
+        navBtn.setOnClickListener {
+            val drawerLayout: DrawerLayout = findViewById(R.id.drawerLayout)
+            drawerLayout.openDrawer(GravityCompat.START)
+        }
+        val drawerLayout: DrawerLayout = findViewById(R.id.drawerLayout)
+        drawerLayout.addDrawerListener(object : DrawerLayout.DrawerListener {
+            override fun onDrawerStateChanged(newState: Int) {}
+
+            override fun onDrawerSlide(drawerView: View, slideOffset: Float) {}
+
+            override fun onDrawerOpened(drawerView: View) {}
+
+            override fun onDrawerClosed(drawerView: View) {
+                val manager = getSystemService(Context.INPUT_METHOD_SERVICE)
+                as InputMethodManager
+                manager.hideSoftInputFromWindow(drawerView.windowToken, InputMethodManager.HIDE_NOT_ALWAYS)
+            }
+        })
     }
 
-    private fun refreshWeather() {
+    fun refreshWeather() {
         viewModel.refreshWeather(viewModel.locationLng, viewModel.locationLat)
         val swiperRefresh: SwipeRefreshLayout = findViewById(R.id.swiperRefresh)
         swiperRefresh.isRefreshing = true
