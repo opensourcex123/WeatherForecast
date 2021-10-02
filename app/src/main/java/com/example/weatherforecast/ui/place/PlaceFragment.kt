@@ -1,6 +1,7 @@
 package com.example.weatherforecast.ui.place
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -19,6 +20,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.weatherforecast.R
 import com.example.weatherforecast.databinding.FragmentPlaceBinding
 import com.example.weatherforecast.logic.model.Place
+import com.example.weatherforecast.ui.weather.WeatherActivity
 
 // 实现place fragment的类
 class PlaceFragment : Fragment() {
@@ -39,6 +41,17 @@ class PlaceFragment : Fragment() {
     @SuppressLint("NotifyDataSetChanged")
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+        if (viewModel.isPlaceSaved()) {
+            val place = viewModel.getSavedPlace()
+            val intent = Intent(context, WeatherActivity::class.java).apply {
+                putExtra("location_lng", place.location.lng)
+                putExtra("location_lat", place.location.lat)
+                putExtra("place_name", place.name)
+            }
+            startActivity(intent)
+            activity?.finish()
+            return
+        }
         val recyclerView: RecyclerView = activity!!.findViewById(R.id.recyclerView)
         val searchPlaceEdit: EditText = activity!!.findViewById(R.id.searchPlaceEdit)
         val bgImageView: ImageView = activity!!.findViewById(R.id.bgImageView)
