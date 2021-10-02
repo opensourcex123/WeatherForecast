@@ -10,6 +10,7 @@ import android.view.View
 import android.widget.*
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.weatherforecast.R
 import com.example.weatherforecast.logic.model.Weather
 import com.example.weatherforecast.logic.model.getSky
@@ -48,9 +49,22 @@ class WeatherActivity : AppCompatActivity() {
                 Toast.makeText(this, "无法获取城市天气信息", Toast.LENGTH_SHORT).show()
                 result.exceptionOrNull()?.printStackTrace()
             }
+            val swiperRefresh: SwipeRefreshLayout = findViewById(R.id.swiperRefresh)
+            swiperRefresh.isRefreshing = false
         })
         // 刷新天气请求
+        val swiperRefresh: SwipeRefreshLayout = findViewById(R.id.swiperRefresh)
+        swiperRefresh.setColorSchemeResources(R.color.design_default_color_primary)
+        refreshWeather()
+        swiperRefresh.setOnRefreshListener {
+            refreshWeather()
+        }
+    }
+
+    private fun refreshWeather() {
         viewModel.refreshWeather(viewModel.locationLng, viewModel.locationLat)
+        val swiperRefresh: SwipeRefreshLayout = findViewById(R.id.swiperRefresh)
+        swiperRefresh.isRefreshing = true
     }
 
     private fun showWeatherInfo(weather: Weather) {
